@@ -9,10 +9,10 @@ function App() {
   useEffect(() => {
     axios.get('http://localhost:3000/api/v1/users')
       .then(response => {
-        console.log("Дані отримано:", response.data)
+        console.log("Data received:", response.data)
         setUsers(response.data)
       })
-      .catch(error => console.error("Помилка:", error))
+      .catch(error => console.error("Error:", error))
   }, [])
 
   return (
@@ -22,7 +22,7 @@ function App() {
       </Typography>
       
       <Alert severity="info" style={{ marginBottom: '1rem' }}>
-        Frontend connected successfully до API!
+        Frontend connected successfully to the API!
       </Alert>
 
       <Typography variant="h6" gutterBottom>
