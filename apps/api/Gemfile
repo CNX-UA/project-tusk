@@ -56,3 +56,7 @@ gem "aws-sdk-s3", "~> 1.212", require: false
   # loads variables from file .env (keys, passwords)
   # Only needed locally, on prod variables are assigned by the server
 gem "dotenv-rails", "~> 3.2", group: [:development, :test]
+
+gem "devise", "~> 4.9"
+
+gem "devise-jwt", "~> 0.13.0"
