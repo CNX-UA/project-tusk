@@ -60,3 +60,7 @@ gem "dotenv-rails", "~> 3.2", group: [:development, :test]
 gem "devise", "~> 4.9"
 
 gem "devise-jwt", "~> 0.13.0"
+
+gem "omniauth-google-oauth2", "~> 1.2"
+
+gem "omniauth-github", "~> 2.0"

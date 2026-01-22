@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# allows login through a GET-request (for browser links) remove later on!!!
+OmniAuth.config.allowed_request_methods = %i[get]
+OmniAuth.config.silence_get_warning = true
+
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -97,7 +101,7 @@ Devise.setup do |config|
   # Notice that if you are skipping storage for all authentication paths, you
   # may want to disable generating routes to Devise's sessions controller by
   # passing skip: :sessions to `devise_for` in your config/routes.rb
-  config.skip_session_storage = [:http_auth]
+  config.skip_session_storage = [:http_auth, :params_auth]
 
   # By default, Devise cleans up the CSRF token on authentication to
   # avoid CSRF token fixation attacks. This means that, when using AJAX
@@ -271,7 +275,9 @@ Devise.setup do |config|
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+
+  config.omniauth :google_oauth2, ENV["GOOGLE_CLIENT_ID"], ENV["GOOGLE_CLIENT_SECRET"], {}
+  config.omniauth :github, ENV["GITHUB_CLIENT_ID"], ENV["GITHUB_CLIENT_SECRET"], scope: "user:email"
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
@@ -312,14 +318,14 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
   # JWT Config
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.secret_key_base || Rails.application.secret_key_base
+    jwt.secret = ENV.fetch("DEVISE_JWT_SECRET_KEY")
 
     jwt.dispatch_requests = [
-      ['POST', %r{^/users/sign_in$}]
+      ["POST", %r{^/users/sign_in$}]
     ]
 
     jwt.revocation_requests = [
-      ['DELETE', %r{^/users/sign_out$}]
+      ["DELETE", %r{^/users/sign_out$}]
     ]
 
     jwt.expiration_time = 1.day.to_i
