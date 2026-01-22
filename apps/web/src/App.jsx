@@ -1,48 +1,59 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { Container, Typography, List, ListItem, ListItemText, Paper, Alert } from '@mui/material' 
-import './App.css'
+import { useEffect, useState, useMemo } from "react";
+import axios from "axios";
+import { CssBaseline, Box, Toolbar, Container, Typography, Button } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { getAppTheme } from "./theme";
+import Aside from "./components/Aside";
+import AuthForm from "./components/AuthForm";
+import ThemeSwitcher from "./components/ThemeSwitcher";
 
 function App() {
-  const [users, setUsers] = useState([])
+  const [mode, setMode] = useState(localStorage.getItem('themeMode') || 'dark');
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const theme = useMemo(() => getAppTheme(mode), [mode]);
+
+    const toggleColorMode = () => {
+    const newMode = mode === 'light' ? 'dark' : 'light';
+    setMode(newMode);
+    localStorage.setItem('themeMode', newMode);
+  };  
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/v1/users')
-      .then(response => {
-        console.log("Data received:", response.data)
-        setUsers(response.data)
-      })
-      .catch(error => console.error("Error:", error))
-  }, [])
-
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
   return (
-    <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        Project Tusk 🐘
-      </Typography>
-      
-      <Alert severity="info" style={{ marginBottom: '1rem' }}>
-        Frontend connected successfully to the API!
-      </Alert>
+    <ThemeProvider theme={theme}>
+    <Box sx={{ display: "flex", bgcolor: 'background.default'}}>
+      <CssBaseline />
 
-      <Typography variant="h6" gutterBottom>
-        Users (MUI + Axios):
-      </Typography>
+      {isLoggedIn && <Aside toggleColorMode={toggleColorMode} mode={mode}>
+        <ThemeSwitcher mode={mode} toggleColorMode={toggleColorMode} /></Aside>}
 
-      <Paper elevation={3}>
-        <List>
-          {users.map(user => (
-            <ListItem key={user.id} divider>
-              <ListItemText 
-                primary={user.email} 
-                secondary={`ID: ${user.id}`} 
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
-    </Container>
-  )
+      <Container component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Typography variant="h4" gutterBottom>
+          Project Tusk
+        </Typography>
+
+      {isLoggedIn ? (
+          <Box>
+            <Button 
+              variant="outlined" 
+              color="error" 
+              onClick={() => setIsLoggedIn(false)}
+              sx={{ mt: 2 }}
+            >
+              Exit
+            </Button>
+          </Box>
+        ) : (
+            <AuthForm onLoginSuccess={() => setIsLoggedIn(true)} />
+        )}
+      </Container>
+    </Box>
+    </ThemeProvider>
+  );
 }
-
-export default App
+export default App;
