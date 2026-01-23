@@ -14,7 +14,7 @@ class Users::SessionsController < Devise::SessionsController
     if current_user
       render json: {
         status: {code: 200, message: "Logged out successfully."}
-      }, status: ok
+      }, status: :ok
     else
       render json: {
         status: {code: 401, message: "Couldn't find an active session."}
