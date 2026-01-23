@@ -4,4 +4,12 @@ class Team < ApplicationRecord
   has_many :projects, dependent: :destroy
 
   validates :name, presence: true
+
+  enum :department_type, { 
+    general: "general", 
+    it: "it", 
+    marketing: "marketing", 
+    sales: "sales",
+    hr: "hr" 
+  }, default: :general
 end

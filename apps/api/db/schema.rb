@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_193112) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_23_190041) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,10 +39,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_193112) do
     t.datetime "created_at", null: false
     t.string "key"
     t.string "status"
-    t.bigint "team_id", null: false
+    t.bigint "team_id"
     t.string "title"
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.index ["key"], name: "index_projects_on_key", unique: true
     t.index ["team_id"], name: "index_projects_on_team_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
@@ -59,12 +59,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_193112) do
     t.integer "position"
     t.string "priority"
     t.bigint "project_id", null: false
+    t.integer "sequence_id", default: 0, null: false
     t.string "status"
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
     t.index ["creator_id"], name: "index_tasks_on_creator_id"
     t.index ["parent_task_id"], name: "index_tasks_on_parent_task_id"
+    t.index ["project_id", "sequence_id"], name: "index_tasks_on_project_id_and_sequence_id", unique: true
     t.index ["project_id"], name: "index_tasks_on_project_id"
   end
 

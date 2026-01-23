@@ -10,11 +10,25 @@ class Project < ApplicationRecord
   
   before_validation :generate_key, on: :create
 
+  enum :status, { 
+    active: "active", 
+    archived: "archived", 
+    completed: "completed" 
+  }, default: :active
+
   private
   def generate_key
-    return if title.blank?
-    self.key ||= title.parameterize.split("-").map(&:first).join.upcase[0..2]
-    self.key = "PRJ" if self.key.blank?
+    return if title.blank? || key.present?
+    base_key = title.parameterize.split("-").map(&:first).join.upcase[0..2]
+    base_key = "PRJ" if base_key.length < 2
+
+    self.key = base_key
+    counter = 1
+
+    while Project.exists?(key: self.key)
+      self.key = "#{base_key}#{counter}"
+      counter += 1
+    end
   end
   
   def must_have_owner

@@ -14,7 +14,12 @@ class Task < ApplicationRecord
 
   default_scope { order(position: :asc) }
 
-  enum :priority, { low: 0, medium: 1, high: 2, urgent: 3 }, default: :medium
+  enum :priority, { 
+    low: "low", 
+    medium: "medium", 
+    high: "high", 
+    urgent: "urgent" 
+    }, default: :medium
 
   enum :status, { 
     todo: "todo", 
@@ -25,7 +30,17 @@ class Task < ApplicationRecord
 
   after_initialize :set_default_status, if: :new_record?
 
+  before_create :set_sequence_id
+
+  def key
+    "#{project.key}-#{sequence_id}"
+  end
+
   private
+  def set_sequence_id
+    max_seq = Task.where(project_id: project_id).maximum(:sequence_id) || 0
+    self.sequence_id = max_seq + 1
+  end
 
   def set_default_status
     self.status ||= "todo"
