@@ -18,12 +18,12 @@ module Users
       if @user.persisted?
         token = Warden::JWTAuth::UserEncoder.new.call(@user, :user, nil).first
 
-        #change localhost:5173 later to a proper address
-        redirect_to "http://localhost:5173/auth/callback?token=#{token}", allow_other_host: true
+        domain_url = ENV.fetch('DOMAIN_URL', 'http://localhost:5173')
+        redirect_to "#{domain_url}/auth/callback?token=#{token}", allow_other_host: true
 
       else
         #change localhost:5173 later to a proper address
-        redirect_to "http://localhost:5173/login?error=AuthFailed", allow_other_host: true
+        redirect_to "#{domain_url}/login?error=AuthFailed", allow_other_host: true
       end
     end
   end
