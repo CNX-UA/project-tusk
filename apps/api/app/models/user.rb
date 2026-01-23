@@ -33,13 +33,18 @@ class User < ApplicationRecord
   enum :role, { user: 0, admin: 1 }, default: :user
 
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).or(where(email: auth.info.email)).first_or_create do |user|
-      user.email = auth.info.email
+      user = where(email: auth.info.email).first_or_initialize
       user.password = Devise.friendly_token[0,20]
       user.provider = auth.provider
       user.uid = auth.uid
 
-      user.avatar_url = auth.info.image
+      user.avatar_url = auth.info.image if user.avatar_url.blank?
+
+    if user.new_record?
+      user.password = Devise.friendly_token[0, 20]
     end
+    
+    user.save
+    user
   end
 end
