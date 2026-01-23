@@ -7,7 +7,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     if resource.persisted?
       render json:{
         status: {code: 200, message: "Singed up successfully."},
-        data: UserBlueprint.render_as_hash(resource)
+        data: ::UserBlueprint.render_as_hash(resource)
       }
     else
       render json: {
