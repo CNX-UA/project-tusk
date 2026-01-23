@@ -99,6 +99,7 @@ GEM
     bcrypt (3.1.21)
     bcrypt_pbkdf (1.1.2)
     bigdecimal (4.0.1)
+    blueprinter (1.2.1)
     bootsnap (1.21.1)
       msgpack (~> 1.2)
     brakeman (7.1.2)
@@ -420,6 +421,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-s3 (~> 1.212)
   bcrypt (~> 3.1.7)
+  blueprinter (~> 1.2)
   bootsnap
   brakeman
   bundler-audit
