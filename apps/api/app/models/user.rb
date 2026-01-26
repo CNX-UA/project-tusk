@@ -47,4 +47,14 @@ class User < ApplicationRecord
     user.save
     user
   end
+
+  def update_refresh_token!
+    token = SecureRandom.base58(64)
+    update!(refresh_token: token)
+    token
+  end
+
+  def clear_refresh_token!
+    update!(refresh_token: nil)
+  end
 end

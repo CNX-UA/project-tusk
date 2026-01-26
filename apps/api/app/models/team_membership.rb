@@ -1,6 +1,6 @@
 class TeamMembership < ApplicationRecord
   belongs_to :user
-  belongs_to :team
+  belongs_to :team, counter_cache: :users_count
 
   enum :role, { member: "member", manager: "manager" }, default: :member
 
