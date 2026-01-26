@@ -16,6 +16,7 @@ PostgreSQL (v16+)
 1) Fill out .env (using .env.example)
 2) rails db:create
 3) rails db:migrate
+4) rails db:seed
 3. Launch server
 1) rails s
 
