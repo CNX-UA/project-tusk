@@ -1,10 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useQueryClient } from '@tanstack/react-query';
 import { CssBaseline, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { getAppTheme } from "@/config/theme"; 
+
 import MainLayout from "@/components/layout/MainLayout";
 import AuthForm from "@/features/auth/components/AuthForm";
+import OAuthCallback from "@/features/auth/components/OAuthCallback";
 
 import Projects from "@/features/projects/components/Projects";
 import Tasks from "@/features/tasks/components/Tasks";
@@ -20,6 +23,9 @@ function App() {
     const token = localStorage.getItem("token");
     if (token) setIsLoggedIn(true);
   }, []);
+
+    const queryClient = useQueryClient();
+
 
     const handleLogout = () => {
       localStorage.removeItem("token");
@@ -66,10 +72,12 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/projects" replace /> } />
         </Route>
-      ) : (
+        ) : (
         <Route path="*" element={<Navigate to="/login" replace />} />
-      )}
+        )}
 
+        <Route path="/auth/callback" element={<OAuthCallback onLoginSuccess={() => setIsLoggedIn(true)} />}
+        />
         </Routes>
     </ThemeProvider>
   );
