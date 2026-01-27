@@ -18,7 +18,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # --- Backend (Rails) ---
-/apps/api/.env
+/apps/api/.env*
+!/apps/api/.env.example
 /apps/api/config/master.key
 /apps/api/tmp/
 /apps/api/log/

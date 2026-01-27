@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_21_013355) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_26_181919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,28 +39,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_21_013355) do
     t.datetime "created_at", null: false
     t.string "key"
     t.string "status"
-    t.bigint "team_id", null: false
+    t.bigint "team_id"
     t.string "title"
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["key"], name: "index_projects_on_key", unique: true
     t.index ["team_id"], name: "index_projects_on_team_id"
+    t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
   create_table "tasks", force: :cascade do |t|
     t.bigint "assignee_id"
     t.datetime "created_at", null: false
     t.bigint "creator_id"
+    t.datetime "deadline"
     t.text "description"
     t.datetime "due_date"
     t.bigint "parent_task_id"
+    t.integer "position"
     t.string "priority"
     t.bigint "project_id", null: false
+    t.integer "sequence_id", default: 0, null: false
     t.string "status"
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
     t.index ["creator_id"], name: "index_tasks_on_creator_id"
     t.index ["parent_task_id"], name: "index_tasks_on_parent_task_id"
+    t.index ["project_id", "sequence_id"], name: "index_tasks_on_project_id_and_sequence_id", unique: true
     t.index ["project_id"], name: "index_tasks_on_project_id"
   end
 
@@ -80,6 +86,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_21_013355) do
     t.string "department_type"
     t.string "name"
     t.datetime "updated_at", null: false
+    t.integer "users_count", default: 0, null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -88,12 +95,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_21_013355) do
     t.string "email"
     t.string "encrypted_password", default: "", null: false
     t.string "jti", null: false
+    t.string "provider"
+    t.string "refresh_token"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
+    t.integer "role"
+    t.string "uid"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
+    t.index ["refresh_token"], name: "index_users_on_refresh_token", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -102,6 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_21_013355) do
   add_foreign_key "comments", "tasks"
   add_foreign_key "comments", "users"
   add_foreign_key "projects", "teams"
+  add_foreign_key "projects", "users"
   add_foreign_key "tasks", "projects"
   add_foreign_key "tasks", "tasks", column: "parent_task_id"
   add_foreign_key "tasks", "users", column: "assignee_id"
