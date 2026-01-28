@@ -19,6 +19,14 @@ module Users
 
       if @user.persisted?
         token = Warden::JWTAuth::UserEncoder.new.call(@user, :user, nil).first
+        refresh_token = @user.update_refresh_token!
+
+        cookies.signed[:refresh_token] = {
+          value: refresh_token,
+          httponly: true,
+          secure: Rails.env.production?,
+          expires: 1.week.from_now
+        }
 
         domain_url = ENV.fetch('DOMAIN_URL', 'http://localhost:5173')
         redirect_to "#{domain_url}/auth/callback?token=#{token}", allow_other_host: true
