@@ -1,48 +1,85 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { Container, Typography, List, ListItem, ListItemText, Paper, Alert } from '@mui/material' 
-import './App.css'
+import { useEffect, useState, useMemo } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useQueryClient } from '@tanstack/react-query';
+import { CssBaseline, Box } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+import { getAppTheme } from "@/config/theme"; 
+
+import MainLayout from "@/components/layout/MainLayout";
+import AuthForm from "@/features/auth/components/AuthForm";
+import OAuthCallback from "@/features/auth/components/OAuthCallback";
+
+import Projects from "@/features/projects/components/Projects";
+import Tasks from "@/features/tasks/components/Tasks";
+import Settings from "@/features/settings/components/Settings";
 
 function App() {
-  const [users, setUsers] = useState([])
+  const [mode, setMode] = useState(localStorage.getItem('themeMode') || 'dark');
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
-  useEffect(() => {
-    axios.get('http://localhost:3000/api/v1/users')
-      .then(response => {
-        console.log("Data received:", response.data)
-        setUsers(response.data)
-      })
-      .catch(error => console.error("Error:", error))
-  }, [])
+  const theme = useMemo(() => getAppTheme(mode), [mode]);
+
+    useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) setIsLoggedIn(true);
+  }, []);
+
+    const queryClient = useQueryClient();
+
+
+    const handleLogout = () => {
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      queryClient.clear();
+    }
+
+    const toggleColorMode = () => {
+    const newMode = mode === 'light' ? 'dark' : 'light';
+    setMode(newMode);
+    localStorage.setItem('themeMode', newMode);
+  };  
 
   return (
-    <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        Project Tusk 🐘
-      </Typography>
-      
-      <Alert severity="info" style={{ marginBottom: '1rem' }}>
-        Frontend connected successfully to the API!
-      </Alert>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+        <Routes>
+          <Route path="/login"
+          element={
+            !isLoggedIn ? (
+              <Box sx={{
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              minHeight: '100vh', 
+              bgcolor: 'background.default'
+              }}>
+                <AuthForm onLoginSuccess={() => setIsLoggedIn(true)} />
+              </Box>
+            ) : (
+              <Navigate to="/projects" replace/>
+            )
+          }
+          />
+          
+      {isLoggedIn ? ( 
+        <Route element={
+          <MainLayout 
+          toggleColorMode={toggleColorMode} mode={mode} 
+          onLogout={handleLogout} userEmail={"admin@test.com"} /> 
+        }>
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<Navigate to="/projects" replace /> } />
+        </Route>
+        ) : (
+        <Route path="*" element={<Navigate to="/login" replace />} />
+        )}
 
-      <Typography variant="h6" gutterBottom>
-        Users (MUI + Axios):
-      </Typography>
-
-      <Paper elevation={3}>
-        <List>
-          {users.map(user => (
-            <ListItem key={user.id} divider>
-              <ListItemText 
-                primary={user.email} 
-                secondary={`ID: ${user.id}`} 
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
-    </Container>
-  )
+        <Route path="/auth/callback" element={<OAuthCallback onLoginSuccess={() => setIsLoggedIn(true)} />}
+        />
+        </Routes>
+    </ThemeProvider>
+  );
 }
-
-export default App
+export default App;
