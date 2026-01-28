@@ -30,7 +30,7 @@ class User < ApplicationRecord
 
   validates :email, presence: true, uniqueness: true, format: {with: URI::MailTo::EMAIL_REGEXP}
 
-  enum :role, { user: 0, admin: 1 }, default: :user
+  enum :role, { user: "user", admin: "admin" }, default: :user
 
   def self.from_omniauth(auth)
       user = where(email: auth.info.email).first_or_initialize

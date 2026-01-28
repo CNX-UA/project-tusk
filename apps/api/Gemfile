@@ -66,3 +66,7 @@ gem "omniauth-google-oauth2", "~> 1.2"
 gem "omniauth-github", "~> 2.0"
 
 gem "blueprinter", "~> 1.2"
+
+gem "rack-attack", "~> 6.8"
+
+gem "pundit", "~> 2.5"

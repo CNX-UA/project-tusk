@@ -1,8 +1,9 @@
 class Api::V1::UsersController < ApplicationController
   def index
+    authorize User
 
-    @users = User.all
+    @users = policy_scope(User)
 
-    render json: @users, status: :ok
+    render json: ::UserBlueprint.render(@users), status: :ok
   end
 end
