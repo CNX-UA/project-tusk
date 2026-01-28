@@ -6,10 +6,10 @@ class Team < ApplicationRecord
   validates :name, presence: true
 
   enum :department_type, { 
-    general: "general", 
-    it: "it", 
-    marketing: "marketing", 
-    sales: "sales",
-    hr: "hr" 
+    general: 0, 
+    it: 1, 
+    marketing: 2, 
+    sales: 3,
+    hr: 4 
   }, default: :general
 end

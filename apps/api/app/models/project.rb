@@ -11,9 +11,9 @@ class Project < ApplicationRecord
   before_validation :generate_key, on: :create
 
   enum :status, { 
-    active: "active", 
-    archived: "archived", 
-    completed: "completed" 
+    active: 0, 
+    archived: 1, 
+    completed: 2 
   }, default: :active
 
   private
