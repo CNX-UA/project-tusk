@@ -13,6 +13,7 @@ export const useAuthForm = ( onLoginSuccess, tabValue ) => {
         validationSchema: authSchema,
         onSubmit: (values) => {
             tabValue === 0 ? login.mutate(values) : register.mutate(values);
+
         }
     });
 

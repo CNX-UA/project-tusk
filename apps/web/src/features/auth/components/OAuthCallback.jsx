@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Loader from "@/components/ui/Loader";
 
 const OAuthCallback = ({ onLoginSuccess }) => {
     const [searchParams] = useSearchParams();

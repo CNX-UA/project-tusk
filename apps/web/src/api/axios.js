@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   }
@@ -24,16 +25,8 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem("refresh_token");
 
-        if(!refreshToken) {
-          throw new Error("No refresh token available");
-        }
-
-        const response = await axios.post(
-            `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/refresh`,
-            { refresh_token: refreshToken }
-        );
+        const response = await api.post("/refresh");
 
         const newAccessToken = response.data.token;
 
@@ -47,7 +40,6 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.error("Session expired:", refreshError);
         localStorage.removeItem('token');
-        localStorage.removeItem('refresh_token');
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
