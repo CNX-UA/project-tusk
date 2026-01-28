@@ -8,16 +8,25 @@ class Users::SessionsController < Devise::SessionsController
   def respond_with(resource, _opts={})
     refresh_token = resource.update_refresh_token!
 
+    cookies.signed[:refresh_token] = {
+      value: refresh_token,
+      httponly: true,
+      secure: Rails.env.production?, #HTTPS in production
+      expires: 1.week.from_now,
+      same_site: :lax 
+    }
+
     render json: {
       status: {code: 200, message: "Logged in successfully."},
       data: ::UserBlueprint.render_as_hash(resource),
-      refresh_token: refresh_token
     }, status: :ok
   end
 
   def respond_to_on_destroy
     if current_user
       current_user&.clear_refresh_token!
+
+      cookies.delete(:refresh_token)
 
       render json: {
         status: {code: 200, message: "Logged out successfully."}

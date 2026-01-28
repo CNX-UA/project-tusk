@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_27_184523) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_28_135701) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -38,7 +38,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_184523) do
   create_table "projects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "key"
-    t.string "status"
+    t.integer "status", default: 0
     t.bigint "team_id"
     t.string "title"
     t.datetime "updated_at", null: false
@@ -57,10 +57,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_184523) do
     t.datetime "due_date"
     t.bigint "parent_task_id"
     t.integer "position"
-    t.string "priority"
+    t.integer "priority", default: 1
     t.bigint "project_id", null: false
     t.integer "sequence_id", default: 0, null: false
-    t.string "status"
+    t.integer "status", default: 0
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
@@ -72,7 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_184523) do
 
   create_table "team_memberships", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "role"
+    t.integer "role", default: 0
     t.bigint "team_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -83,7 +83,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_184523) do
 
   create_table "teams", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "department_type"
+    t.integer "department_type", default: 0
     t.string "name"
     t.datetime "updated_at", null: false
     t.integer "users_count", default: 0, null: false
@@ -100,7 +100,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_27_184523) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
-    t.string "role", default: "user"
+    t.integer "role", default: 0
     t.string "uid"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true

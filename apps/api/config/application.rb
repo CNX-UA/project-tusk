@@ -32,6 +32,7 @@ module Api
     #need for OmniAuth (github/google) functionality
     config.session_store :cookie_store, key: "_project_tusk_session"
     config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
     config.middleware.use config.session_store, config.session_options
     config.middleware.use ActionDispatch::Flash
     

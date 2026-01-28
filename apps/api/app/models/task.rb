@@ -15,18 +15,18 @@ class Task < ApplicationRecord
   default_scope { order(position: :asc) }
 
   enum :priority, { 
-    low: "low", 
-    medium: "medium", 
-    high: "high", 
-    urgent: "urgent" 
+    low: 0, 
+    medium: 1, 
+    high: 2, 
+    urgent: 3 
     }, default: :medium
 
   enum :status, { 
-    todo: "todo", 
-    in_progress: "in_progress", 
-    review: "review", 
-    done: "done" 
-  }, default: "todo"
+    todo: 0, 
+    in_progress: 1, 
+    review: 2, 
+    done: 3 
+  }, default: :"todo"
 
   after_initialize :set_default_status, if: :new_record?
 
