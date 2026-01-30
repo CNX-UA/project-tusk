@@ -6,4 +6,6 @@ export const authSchema = Yup.object().shape({
     .required('Email is required'),
     password: Yup.string()
     .min(8, 'The password must be at least 8 characters long.')
+    .required('Password is required'),
+
 });

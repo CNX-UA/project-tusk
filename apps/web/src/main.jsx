@@ -4,7 +4,6 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter } from 'react-router-dom' 
 import { queryClient} from "@/api/queryClient";
-
 import App from '@/App.jsx'
 
 import '@fontsource/nunito/300.css';

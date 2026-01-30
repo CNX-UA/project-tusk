@@ -1,16 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Button, Typography, Paper, Box, Tab, Tabs, Alert, Divider, IconButton, InputAdornment, CircularProgress } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import GoogleIcon from '@mui/icons-material/Google';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { useAuthForm } from "../hooks/useAuthForm";
-
+import { useToast } from "@/context/ToastProvider";
+import { loginWithGoogle, loginWithGithub } from "../api/authRequests";
 
 const AuthForm = ({ onLoginSuccess }) => {
   const [ tabValue, setTabValue ] = useState(0);
   const { formik, isLoading, isError, errorMessage } = useAuthForm(onLoginSuccess, tabValue);
   const [showPassword, setShowPassword] = useState(false);
 
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (isError && errorMessage) {
+      showToast(errorMessage, "error");
+    }
+  }, [isError, errorMessage, showToast]);
+
+  
   return (
     <Paper elevation={3} sx={{ p: 4, maxWidth: 400, mx: "auto", mt: 5 }}> 
       <Tabs
@@ -27,11 +37,6 @@ const AuthForm = ({ onLoginSuccess }) => {
         {tabValue === 0 ? "Login to Tusk" : "Create account"}
       </Typography>
 
-      {isError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {errorMessage}
-        </Alert>
-      )}
 
       <Box component="form" onSubmit={formik.handleSubmit}>
         <TextField
@@ -80,11 +85,21 @@ const AuthForm = ({ onLoginSuccess }) => {
       </Divider>
 
       <Box sx={{display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Button startIcon={<GoogleIcon />}>
+        <Button 
+          fullWidth
+          variant="outlined"
+          startIcon={<GoogleIcon />}
+          onClick={loginWithGoogle}
+        >
           Continue with Google
         </Button>
 
-        <Button startIcon={<GitHubIcon />}>
+        <Button 
+          fullWidth
+          variant="outlined"
+          startIcon={<GitHubIcon />}
+          onClick={loginWithGithub}
+        >
           Continue with GitHub
         </Button>
       </Box>
