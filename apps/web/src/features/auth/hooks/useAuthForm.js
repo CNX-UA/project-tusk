@@ -20,9 +20,22 @@ export const useAuthForm = ( onLoginSuccess, tabValue ) => {
     const isLoading = login.isPending || register.isPending;
     const error  = login.error || register.error;
 
+    const getErrorMessage = (err) => {
+      if (!err?.response?.data) return "Something went wrong";
+      
+      const data = err.response.data;
+      
+      if (data.status?.message) return data.status.message;
+      
+      if (data.error) return data.error;
+      if (data.message) return data.message;
+      
+      return "Something went wrong";
+    };
+
     return {
         formik, isLoading, 
         isError: login.isError || register.isError,
-        errorMessage: error?.response?.data?.error || "Something wrong.."
+        errorMessage: getErrorMessage(error)
     };
 };
