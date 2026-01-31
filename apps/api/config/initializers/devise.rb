@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 # allows login through a GET-request (for browser links) remove later on!!!
-OmniAuth.config.allowed_request_methods = %i[get]
-OmniAuth.config.silence_get_warning = true
+OmniAuth.config.allowed_request_methods = %i[post]
 
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
