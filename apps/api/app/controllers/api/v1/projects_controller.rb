@@ -1,7 +1,8 @@
 module Api
   module V1
     class ProjectsController < ApplicationController
-      before_action :set_project, only: [:show, :update, :destroy]
+      before_action :set_project, only: %i[show, update, destroy]
+      before_action :authorize_project, only: %i[show update destroy]
 
       def index
         @projects = policy_scope(Project).includes(:user, :team)
@@ -20,7 +21,6 @@ module Api
       end
 
       def show
-        authorize @project
         if @project.tasks.exists?
            @project = Project.includes(tasks: [:assignee, :creator, :attachments]).find(params[:id])
         end
@@ -48,8 +48,6 @@ module Api
       end
 
       def update
-        authorize @project
-        
         if @project.update(project_params)
           render json: ProjectBlueprint.render(@project, view: :detail)
         else
@@ -58,7 +56,6 @@ module Api
       end
 
       def destroy
-        authorize @project
         @project.destroy
         head :no_content
       end
@@ -69,6 +66,10 @@ module Api
         @project = Project.find(params[:id])
       end
 
+      def authorize_project
+        authorize @project
+      end
+      
       def project_params
         params.require(:project).permit(:title, :status, :team_id, :parent_id)
       end
