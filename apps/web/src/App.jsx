@@ -4,14 +4,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { CssBaseline, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { getAppTheme } from "@/config/theme"; 
-
+import { ToastProvider } from "./context/ToastProvider";
 import MainLayout from "@/components/layout/MainLayout";
 import AuthForm from "@/features/auth/components/AuthForm";
 import OAuthCallback from "@/features/auth/components/OAuthCallback";
 
-import Projects from "@/features/projects/components/Projects";
-import Tasks from "@/features/tasks/components/Tasks";
-import Settings from "@/features/settings/components/Settings";
+import Projects from "@/features/projects/components/ProjectsPage";
+import Tasks from "@/features/tasks/components/TasksPage";
+import Settings from "@/features/settings/components/SettingsPage";
 
 function App() {
   const [mode, setMode] = useState(localStorage.getItem('themeMode') || 'dark');
@@ -42,6 +42,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <ToastProvider>
         <Routes>
           <Route path="/login"
           element={
@@ -79,6 +80,7 @@ function App() {
         <Route path="/auth/callback" element={<OAuthCallback onLoginSuccess={() => setIsLoggedIn(true)} />}
         />
         </Routes>
+      </ToastProvider>
     </ThemeProvider>
   );
 }
