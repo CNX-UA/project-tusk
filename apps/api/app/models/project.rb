@@ -4,6 +4,13 @@ class Project < ApplicationRecord
 
   has_many :tasks, dependent: :destroy
 
+  belongs_to :parent_project, class_name: "Project", foreign_key: "parent_id", optional: true
+  has_many :subprojects, class_name: "Project", foreign_key: "parent_id", dependent: :destroy
+
+  validate :depth_limit
+
+  validate :exclusive_content_type
+
   validates :title, presence: true
 
   validate :must_have_owner
@@ -16,7 +23,39 @@ class Project < ApplicationRecord
     completed: 2 
   }, default: :active
 
+  before_validation :inherit_parent_context, if: -> {parent_id.present?}
+
   private
+
+  def inherit_parent_context
+    return unless parent_project
+    self.team_id = parent_project.team_id
+    self.user_id = parent_project.user_id
+  end
+
+  def depth_limit
+    return unless parent_id.present?
+    
+    level = 1
+    current_parent = parent_project
+    
+    while current_parent
+      level += 1
+      current_parent = current_parent.parent_project
+      
+      if level > 6
+        errors.add(:base, "Project nesting is too deep (maximum 6 levels allowed)")
+        break
+      end
+    end
+  end
+
+  def exclusive_content_type
+    if tasks.exists? && subprojects.exists?
+      errors.add(:base, "A project can contain either tasks or subprojects, but not both")
+    end
+  end
+
   def generate_key
     return if title.blank? || key.present?
     base_key = title.parameterize.split("-").map(&:first).join.upcase[0..2]

@@ -12,7 +12,15 @@ class ApplicationController < ActionController::API
 
   respond_to :json
 
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
   private
+  
+  def not_found
+    render json: { 
+      status: { code: 404, message: "Resource not found" }
+    }, status: :not_found
+  end
   
   def user_not_authorized
     render json: { 
