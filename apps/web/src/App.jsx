@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useQueryClient } from '@tanstack/react-query';
 import { CssBaseline, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
+import { ToastProvider } from "./context/ToastProvider";
 import { getAppTheme } from "@/config/theme"; 
 import { ToastProvider } from "./context/ToastProvider";
 import MainLayout from "@/components/layout/MainLayout";
@@ -80,7 +81,7 @@ function App() {
         <Route path="/auth/callback" element={<OAuthCallback onLoginSuccess={() => setIsLoggedIn(true)} />}
         />
         </Routes>
-      </ToastProvider>
+        </ToastProvider>
     </ThemeProvider>
   );
 }
