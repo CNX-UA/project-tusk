@@ -27,7 +27,8 @@ module Users
           value: refresh_token,
           httponly: true,
           secure: Rails.env.production?,
-          expires: 1.week.from_now
+          expires: 1.week.from_now,
+          same_site: :lax
         }
 
         redirect_to "#{domain_url}/auth/callback?token=#{token}", allow_other_host: true
