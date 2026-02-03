@@ -1,4 +1,10 @@
 class TeamPolicy < ApplicationPolicy
+  class Scope < Scope
+    def resolve
+      user.teams
+    end
+  end
+
   def show?
     is_member?
   end
@@ -13,12 +19,6 @@ class TeamPolicy < ApplicationPolicy
 
   def destroy?
     is_manager?
-  end
-
-  class Scope < Scope
-    def resolve
-      user.teams
-    end
   end
 
   private

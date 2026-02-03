@@ -1,5 +1,5 @@
 class Attachment < ApplicationRecord
-  belongs_to :task
+  belongs_to :attachable, polymorphic: true
   belongs_to :uploader, class_name: "User"
 
   validates :file_url, presence: true

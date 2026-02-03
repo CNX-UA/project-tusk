@@ -3,6 +3,7 @@ class Project < ApplicationRecord
   belongs_to :team, optional: true
 
   has_many :tasks, dependent: :destroy
+  has_many :attachments, as: :attachable, dependent: :destroy
 
   belongs_to :parent_project, class_name: "Project", foreign_key: "parent_id", optional: true
   has_many :subprojects, class_name: "Project", foreign_key: "parent_id", dependent: :destroy

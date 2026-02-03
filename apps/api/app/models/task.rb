@@ -8,7 +8,7 @@ class Task < ApplicationRecord
   has_many :subtasks, class_name: "Task", foreign_key: "parent_task_id", dependent: :destroy
 
   has_many :comments, dependent: :destroy
-  has_many :attachments, dependent: :destroy
+  has_many :attachments, as: :attachable, dependent: :destroy
 
   validates :title, presence: true
 
@@ -31,6 +31,9 @@ class Task < ApplicationRecord
   after_initialize :set_default_status, if: :new_record?
 
   before_create :set_sequence_id
+
+  scope :filter_by_status, ->(status) { where(status: status) if status.present? }
+  scope :filter_by_assignee, ->(assignee_id) { where(assignee_id: assignee_id) if assignee_id.present? }
 
   def key
     "#{project.key}-#{sequence_id}"

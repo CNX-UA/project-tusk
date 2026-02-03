@@ -10,18 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_31_015314) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_03_075728) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "attachments", force: :cascade do |t|
+    t.bigint "attachable_id", null: false
+    t.string "attachable_type"
     t.datetime "created_at", null: false
     t.string "file_type"
     t.string "file_url"
-    t.bigint "task_id", null: false
     t.datetime "updated_at", null: false
     t.bigint "uploader_id"
-    t.index ["task_id"], name: "index_attachments_on_task_id"
+    t.index ["attachable_id"], name: "index_attachments_on_attachable_id"
+    t.index ["attachable_type", "attachable_id"], name: "index_attachments_on_attachable_type_and_attachable_id"
     t.index ["uploader_id"], name: "index_attachments_on_uploader_id"
   end
 
@@ -111,7 +113,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_31_015314) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "attachments", "tasks"
+  add_foreign_key "attachments", "tasks", column: "attachable_id"
   add_foreign_key "attachments", "users", column: "uploader_id"
   add_foreign_key "comments", "tasks"
   add_foreign_key "comments", "users"
