@@ -5,14 +5,14 @@ import { CssBaseline, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { ToastProvider } from "./context/ToastProvider";
 import { getAppTheme } from "@/config/theme"; 
-
+import { ToastProvider } from "./context/ToastProvider";
 import MainLayout from "@/components/layout/MainLayout";
 import AuthForm from "@/features/auth/components/AuthForm";
 import OAuthCallback from "@/features/auth/components/OAuthCallback";
 
-import Projects from "@/features/projects/components/Projects";
-import Tasks from "@/features/tasks/components/Tasks";
-import Settings from "@/features/settings/components/Settings";
+import Projects from "@/features/projects/components/ProjectsPage";
+import Tasks from "@/features/tasks/components/TasksPage";
+import Settings from "@/features/settings/components/SettingsPage";
 
 function App() {
   const [mode, setMode] = useState(localStorage.getItem('themeMode') || 'dark');
