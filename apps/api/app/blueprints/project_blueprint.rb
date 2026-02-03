@@ -11,7 +11,7 @@ class ProjectBlueprint < Blueprinter::Base
 
   view :detail do
     association :subprojects, blueprint: ProjectBlueprint, view: :detail
-
+    association :attachments, blueprint: AttachmentBlueprint
     association :tasks, blueprint: TaskBlueprint do |project|
       project.subprojects.present? ? [] : project.tasks
     end

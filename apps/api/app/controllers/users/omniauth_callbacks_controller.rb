@@ -17,6 +17,8 @@ module Users
     def handle_auth(kind)
       @user = User.from_omniauth(request.env["omniauth.auth"])
 
+      domain_url = ENV.fetch('DOMAIN_URL', 'http://localhost:5173')
+
       if @user.persisted?
         token = Warden::JWTAuth::UserEncoder.new.call(@user, :user, nil).first
         refresh_token = @user.update_refresh_token!
@@ -28,7 +30,6 @@ module Users
           expires: 1.week.from_now
         }
 
-        domain_url = ENV.fetch('DOMAIN_URL', 'http://localhost:5173')
         redirect_to "#{domain_url}/auth/callback?token=#{token}", allow_other_host: true
 
       else

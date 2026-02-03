@@ -1,4 +1,8 @@
 class CommentPolicy < ApplicationPolicy
+  def index?
+    can_view_task?
+  end
+  
   def create?
     can_view_task?
   end

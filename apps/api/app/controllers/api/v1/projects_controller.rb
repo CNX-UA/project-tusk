@@ -1,7 +1,7 @@
 module Api
   module V1
     class ProjectsController < ApplicationController
-      before_action :set_project, only: %i[show, update, destroy]
+      before_action :set_project, only: %i[show update destroy]
       before_action :authorize_project, only: %i[show update destroy]
 
       def index
@@ -69,7 +69,7 @@ module Api
       def authorize_project
         authorize @project
       end
-      
+
       def project_params
         params.require(:project).permit(:title, :status, :team_id, :parent_id)
       end

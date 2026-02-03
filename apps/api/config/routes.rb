@@ -17,8 +17,22 @@ Rails.application.routes.draw do
   
   namespace :api do
     namespace :v1 do
-      resources :users, only: %i[index, show]
-      resources :projects, only: %i[index, show, create, update, destroy]
+      resources :users, only: %i[index show]
+      resources :projects, only: %i[index show create update destroy] do
+        resources :tasks, only: %i[index create]
+        resources :attachments, only: %i[index create]
+      end
+      resources :tasks, only: %i[show update destroy] do
+        resources :comments, only: %i[index create]
+        resources :attachments, only: %i[index create]
+      end
+      resources :comments, only: %i[destroy] do
+        resources :attachments, only: %i[index create]
+      end
+      resources :attachments, only: %i[destroy]
+      resources :teams, only: %i[index show create update destroy] do
+        resources :memberships, controller: 'team_memberships', only: %i[index create destroy]
+      end
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
