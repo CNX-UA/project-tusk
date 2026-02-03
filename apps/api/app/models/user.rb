@@ -35,18 +35,14 @@ class User < ApplicationRecord
   def self.from_omniauth(auth)
   where(email: auth.info.email).first_or_create do |user|
     user.password = Devise.friendly_token[0,20]
-    user.provider = auth.provider
-    user.uid = auth.uid
-    
-    user.first_name = auth.info.first_name
-    user.last_name = auth.info.last_name
-    
-    if user.first_name.blank?
-      name_parts = auth.info.name.to_s.split(' ')
-      user.first_name = name_parts.first
-      user.last_name = name_parts.last if name_parts.size > 1
+
+    end.tap do |user|
+      user.provider = auth.provider
+      user.uid = auth.uid
+      user.first_name = auth.info.first_name if user.first_name.blank?
+      user.last_name = auth.info.last_name if user.last_name.blank?
+      user.save! if user.changed?
     end
-  end
   end
 
   def update_refresh_token!
