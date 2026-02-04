@@ -6,6 +6,7 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(resource, _opts={})
+  if resource.persisted?
     refresh_token = resource.update_refresh_token!
 
     cookies.signed[:refresh_token] = {
@@ -20,6 +21,9 @@ class Users::SessionsController < Devise::SessionsController
       status: {code: 200, message: "Logged in successfully."},
       data: ::UserBlueprint.render_as_hash(resource),
     }, status: :ok
+  else
+    render json: { error: "Login failed" }, status: :unauthorized
+  end
   end
 
   def respond_to_on_destroy

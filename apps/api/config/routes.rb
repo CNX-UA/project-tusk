@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  get '/csrf', to: 'application#csrf'
+  
   devise_for :users,
               path: "",
               path_names: {
@@ -31,7 +34,7 @@ Rails.application.routes.draw do
       end
       resources :attachments, only: %i[destroy]
       resources :teams, only: %i[index show create update destroy] do
-        resources :memberships, controller: 'team_memberships', only: %i[index create destroy]
+        resources :memberships, controller: :team_memberships, only: %i[index create destroy]
       end
     end
   end
