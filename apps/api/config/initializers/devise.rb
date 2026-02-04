@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # allows login through a GET-request (for browser links) remove later on!!!
-OmniAuth.config.allowed_request_methods = %i[post]
+OmniAuth.config.allowed_request_methods = %i[get post]
 
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
@@ -329,4 +329,6 @@ Devise.setup do |config|
 
     jwt.expiration_time = 15.minutes.to_i
   end
+
+  config.omniauth_path_prefix = "/auth"
 end
