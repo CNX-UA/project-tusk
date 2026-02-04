@@ -1,6 +1,6 @@
 class ProjectBlueprint < Blueprinter::Base
   identifier :id
-  fields :title, :key, :status, :parent_id, :created_at, :updated_at
+  fields :title, :key, :status, :description, :parent_id, :created_at, :updated_at
 
   field :is_folder do |project|
     project.subprojects.any?
