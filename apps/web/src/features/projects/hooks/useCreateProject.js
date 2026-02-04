@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createProject } from "../api/projectsRequests";
 
-export const useCreateProject = () => {
+export const useCreateProject = (onSuccessCallback) => {
     const queryClient = useQueryClient();
 
     return useMutation({
