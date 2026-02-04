@@ -27,18 +27,21 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def respond_to_on_destroy
-    if current_user
-      current_user&.clear_refresh_token!
-
       cookies.delete(:refresh_token)
+      cookies.delete(:_project_tusk_session)
+      cookies.delete(:session_id)
+      reset_session
 
+    if current_user
+      current_user&.clear_refresh_token
+      
       render json: {
         status: {code: 200, message: "Logged out successfully."}
       }, status: :ok
     else
       render json: {
-        status: {code: 401, message: "Couldn't find an active session."}
-      }, status: :unauthorized 
+        status: {code: 200, message: "Logged out successfully (no active session found)."}
+      }, status: :ok
     end
   end
 end
