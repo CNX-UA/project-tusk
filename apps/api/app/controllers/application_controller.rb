@@ -4,31 +4,33 @@ class ApplicationController < ActionController::API
   include ActionController::MimeResponds
   include Pundit::Authorization
 
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :exception, prepend: true
   
   before_action :authenticate_user!, except: [:csrf]
 
   respond_to :json
-
-  after_action :set_csrf_cookie
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
 
   def csrf
-  render json: { authenticity_token: form_authenticity_token }
+    session[:init] = true
+
+    token = form_authenticity_token
+
+    cookies['XSRF-TOKEN'] = {
+      value: token,
+      same_site: :lax,
+      httponly: false, 
+      secure: Rails.env.production?,
+      path: '/'
+    }
+  
+    render json: { authenticity_token: token }
   end
 
   private
-
-  def set_csrf_cookie
-    cookies['XSRF-TOKEN'] = {
-      value: form_authenticity_token,
-      same_site: :lax,
-      secure: Rails.env.production?
-    }
-  end
   
   def not_found
     render json: { 
