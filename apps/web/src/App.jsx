@@ -2,10 +2,12 @@ import { useEffect, useState, useMemo } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useQueryClient } from '@tanstack/react-query';
 import { CssBaseline, Box } from "@mui/material";
+
 import { ThemeProvider } from "@mui/material/styles";
-import { ToastProvider } from "./context/ToastProvider";
+import { ToastProvider } from "@/context/ToastProvider";
+
 import { getAppTheme } from "@/config/theme"; 
-import { ToastProvider } from "./context/ToastProvider";
+
 import MainLayout from "@/components/layout/MainLayout";
 import AuthForm from "@/features/auth/components/AuthForm";
 import OAuthCallback from "@/features/auth/components/OAuthCallback";
