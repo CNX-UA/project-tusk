@@ -5,14 +5,14 @@ class ApplicationController < ActionController::API
   include Pundit::Authorization
 
   protect_from_forgery with: :exception, prepend: true
-  
-  before_action :authenticate_user!, except: [:csrf]
+
 
   respond_to :json
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
+  protect_from_forgery with: :null_session
 
   def csrf
     session[:init] = true
