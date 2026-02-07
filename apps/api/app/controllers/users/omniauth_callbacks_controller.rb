@@ -1,5 +1,5 @@
 module Users
-  class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     skip_before_action :authenticate_user!
     
     skip_before_action :verify_authenticity_token, raise: false
@@ -20,7 +20,6 @@ module Users
       domain_url = ENV.fetch('DOMAIN_URL', 'http://localhost:5173')
 
       if @user.persisted?
-        token = Warden::JWTAuth::UserEncoder.new.call(@user, :user, nil).first
         refresh_token = @user.update_refresh_token!
 
         cookies.signed[:refresh_token] = {
@@ -31,7 +30,7 @@ module Users
           same_site: :lax
         }
 
-        redirect_to "#{domain_url}/auth/callback?token=#{token}", allow_other_host: true
+        redirect_to "#{domain_url}/auth/callback", allow_other_host: true
 
       else
         #change localhost:5173 later to a proper address
