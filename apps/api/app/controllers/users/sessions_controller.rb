@@ -1,5 +1,5 @@
 class Users::SessionsController < Devise::SessionsController
-  skip_before_action :authenticate_user!
+  skip_before_action :authenticate_user!, except: %i[destroy]
 
   respond_to :json
 
@@ -7,6 +7,8 @@ class Users::SessionsController < Devise::SessionsController
 
   def respond_with(resource, _opts={})
   if resource.persisted?
+    access_token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil).first
+
     refresh_token = resource.update_refresh_token!
 
     cookies.signed[:refresh_token] = {
@@ -20,6 +22,7 @@ class Users::SessionsController < Devise::SessionsController
     render json: {
       status: {code: 200, message: "Logged in successfully."},
       data: ::UserBlueprint.render_as_hash(resource),
+      token: access_token
     }, status: :ok
   else
     render json: { error: "Login failed" }, status: :unauthorized
@@ -33,7 +36,7 @@ class Users::SessionsController < Devise::SessionsController
       reset_session
 
     if current_user
-      current_user&.clear_refresh_token
+      current_user&.clear_refresh_token!
       
       render json: {
         status: {code: 200, message: "Logged out successfully."}
