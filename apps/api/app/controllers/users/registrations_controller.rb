@@ -32,4 +32,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
       }, status: :unprocessable_entity
     end
   end
+
+  # Тільки email і password - відповідно до схеми бази
+  def sign_up_params
+    params.require(:user).permit(:email, :password, :password_confirmation)
+  end
+
+  def account_update_params
+    params.require(:user).permit(:email, :password, :password_confirmation, :current_password, :avatar_url)
+  end
 end
