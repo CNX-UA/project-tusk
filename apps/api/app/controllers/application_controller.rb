@@ -3,6 +3,7 @@ class ApplicationController < ActionController::API
   include ActionController::RequestForgeryProtection
   include ActionController::MimeResponds
   include Pundit::Authorization
+  include Devise::Controllers::Helpers
 
   protect_from_forgery with: :null_session, prepend: true
   before_action :authenticate_user!

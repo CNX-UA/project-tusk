@@ -14,7 +14,7 @@ class Project < ApplicationRecord
 
   validates :title, presence: true
 
-  validates :description, length: { maximum: 2000 }, allow_blank: tru
+  validates :description, length: { maximum: 2000 }, allow_blank: true
   
   validate :must_have_owner
   
