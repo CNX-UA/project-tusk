@@ -1,25 +1,25 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
+  devise_for :users,
+             path: "api/v1",
+             path_names: {
+               sign_in: "login",
+               sign_out: "logout",
+               registration: "signup"
+             },
+             controllers: {
+               sessions: "users/sessions",
+               registrations: "users/registrations",
+               omniauth_callbacks: "users/omniauth_callbacks"
+             },
+             defaults: { format: :json }
+
   namespace :api do
     namespace :v1 do
-      get '/csrf', to: 'application#csrf'
+      get "/csrf", to: "application#csrf"
       
-      devise_for :users,
-                  path: "",
-                  path_names: {
-                    sign_in: "login",
-                    sign_out: "logout",
-                    registration: "signup"
-                  },
-                  controllers: {
-                    sessions: "users/sessions",
-                    registrations: "users/registrations",
-                    omniauth_callbacks: "users/omniauth_callbacks"
-                  },
-                  defaults: { format: :json }
-
-      post '/refresh', to: 'users/refresh#create'
+      post "/refresh", to: "/users/refresh#create"
       
       resources :users, only: %i[index show]
       
@@ -40,7 +40,7 @@ Rails.application.routes.draw do
       resources :attachments, only: %i[destroy]
       
       resources :teams, only: %i[index show create update destroy] do
-        resources :memberships, controller: :team_memberships, only: %i[index create destroy]
+        resources :memberships, controller: "team_memberships", only: %i[index create destroy]
       end
     end
   end
