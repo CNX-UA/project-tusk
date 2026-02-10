@@ -31,10 +31,18 @@ module Api
 
     #need for OmniAuth (github/google) functionality
     config.session_store :cookie_store, key: "_project_tusk_session"
-    config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore
-    config.middleware.use config.session_store, config.session_options
-    config.middleware.use ActionDispatch::Flash
+  
+    config.session_options = {
+      key: '_project_tusk_session',
+      same_site: :lax, 
+      secure: Rails.env.production?
+    }
+
+    config.middleware.insert_before Rack::Head, ActionDispatch::Cookies
+    #config.middleware.use ActionDispatch::Session::CookieStore
+    config.middleware.insert_before Rack::Head, config.session_store, config.session_options
+    #config.middleware.use ActionDispatch::RequestForgeryProtection
+    config.middleware.insert_before Rack::Head, ActionDispatch::Flash
     
     config.middleware.use Rack::Attack
   end

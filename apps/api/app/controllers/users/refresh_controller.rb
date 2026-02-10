@@ -1,5 +1,6 @@
 class Users::RefreshController < ApplicationController
   skip_before_action :authenticate_user!
+  skip_before_action :verify_authenticity_token
 
   def create
     refresh_token = cookies.signed[:refresh_token]

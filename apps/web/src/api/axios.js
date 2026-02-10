@@ -1,17 +1,16 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/csrf',
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
   withCredentials: true,
   headers: {
     'Accept': 'application/json',
     "Content-Type": "application/json",
-  }
+  },
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = token.startsWith('Bearer') ? token : `Bearer ${token}`;
   }
@@ -25,7 +24,7 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response, 
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
@@ -33,36 +32,27 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
+        const response = await api.post("/refresh");
 
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3000'/users/refresh}`,
-          {},
-          { withCredentials: true,
-            headers: {
-              "X-XSRF-TOKEN": Cookies.get('XSRF-TOKEN')
-            }
-           }
-        );
+        const newAccessToken = response.data.token;
 
-        const newAccessToken = response.headers['authorization'] || response.data.token;
+        const formattedToken = newAccessToken.startsWith("Bearer")
+          ? newAccessToken
+          : `Bearer ${newAccessToken}`;
 
-        if(newAccessToken) {
-          const formattedToken = newAccessToken.startsWith('Bearer') ? newAccessToken : `Bearer ${newAccessToken}`;
-          localStorage.setItem('token', formattedToken);
-          api.defaults.headers.common['Authorization'] = formattedToken;
+        localStorage.setItem("token", formattedToken);
 
-          originalRequest.headers.Authorization = formattedToken;
-          return api(originalRequest);
-        }
+        originalRequest.headers.Authorization = formattedToken;
+        return api(originalRequest);
       } catch (refreshError) {
         console.error("Session expired:", refreshError);
-        localStorage.removeItem('token');
-        localStorage.removeItem('userEmail');
-        window.location.href = '/login?error=SessionExpired';
+        localStorage.removeItem("token");
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
     return Promise.reject(error);
-  });
-  
+  }
+);
+
 export default api;
