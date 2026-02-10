@@ -18,6 +18,8 @@ class Project < ApplicationRecord
   
   validate :must_have_owner
   
+  validate :parent_is_not_a_board
+
   before_validation :generate_key, on: :create
 
   enum :status, { 
@@ -80,5 +82,12 @@ class Project < ApplicationRecord
     if user_id.present? && team_id.present?
       errors.add(:base, "Project cannot belong to both User and Team at the same time")
     end
+  end
+
+  def parent_is_not_a_board
+    return unless parent_project
+      if parent_project.tasks.exists?
+      errors.add(:base, "Cannot add sub-projects to a Board project (it already contains tasks)")
+      end
   end
 end

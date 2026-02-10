@@ -4,5 +4,6 @@ class TeamBlueprint < Blueprinter::Base
   
   view :detail do
     association :projects, blueprint: ProjectBlueprint
+    association :team_memberships, blueprint: TeamMembershipBlueprint, name: :members
   end
 end

@@ -18,7 +18,8 @@ class AttachmentPolicy < ApplicationPolicy
   private
   
   def can_view_attachable?
-    parent = record.is_a?(Attachment) ? record.attachable : record 
+    target = record.is_a?(Attachment) ? record.attachable : record
+    return false if target.nil?
     
     if parent.is_a?(Task)
       Pundit.policy!(user, parent.project).show?
