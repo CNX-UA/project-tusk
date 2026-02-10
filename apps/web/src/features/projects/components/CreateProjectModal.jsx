@@ -111,7 +111,7 @@ const CreateProjectModal = ({ open, onClose }) => {
 
                    {createMutation.isError && (         
                     <Typography color='error' variant='body2' sx={{ mt: 2 }}>
-                        {createMutation.error?.response?.data?.status?.message || "Failed to create project"}
+                        {createMutation.error?.response?.data?.status?.message || console.log(createMutation.error)}
                     </Typography>
                    )}
                 </DialogContent>

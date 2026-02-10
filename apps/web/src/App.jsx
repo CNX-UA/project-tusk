@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { CssBaseline, Box } from "@mui/material";
+import api from '@/api/axios'
 import { ThemeProvider } from "@mui/material/styles";
 import { ToastProvider } from "./context/ToastProvider";
 import { getAppTheme } from "@/config/theme";

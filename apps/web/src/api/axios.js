@@ -4,6 +4,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
   withCredentials: true,
   headers: {
+    'Accept': 'application/json',
     "Content-Type": "application/json",
   },
 });
@@ -11,8 +12,14 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
-    config.headers.Authorization = token;
+    config.headers.Authorization = token.startsWith('Bearer') ? token : `Bearer ${token}`;
   }
+
+  const csrfToken = Cookies.get('XSRF-TOKEN');
+  if (csrfToken){
+    config.headers['X-XSRF-TOKEN'] = csrfToken;
+  }
+
   return config;
 });
 
@@ -21,7 +28,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/refresh')) {
       originalRequest._retry = true;
 
       try {
