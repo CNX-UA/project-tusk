@@ -1,3 +1,5 @@
+eslint-disable-next-line react-refresh/only-export-components;
+
 import { createContext, useContext, useState, useCallback} from 'react';
 import Toast from '@/components/ui/Toast';
 

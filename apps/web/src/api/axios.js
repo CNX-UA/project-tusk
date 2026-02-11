@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
   headers: {
     'Accept': 'application/json',
@@ -15,12 +15,12 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = token.startsWith('Bearer') ? token : `Bearer ${token}`;
   }
 
-  const csrfToken = Cookies.get('XSRF-TOKEN');
-  if (csrfToken){
-    config.headers['X-XSRF-TOKEN'] = csrfToken;
-  }
+  //const csrfToken = Cookies.get('XSRF-TOKEN');
+  //if (csrfToken){
+  //  config.headers['X-XSRF-TOKEN'] = csrfToken;
+ //}
 
-  return config;
+  //return config;
 });
 
 api.interceptors.response.use(

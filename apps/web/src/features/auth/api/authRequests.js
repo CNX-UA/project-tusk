@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
  * Ініціація OAuth через POST з CSRF захистом.
  */
 const submitOAuthForm = (provider) => {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const apiUrl = import.meta.env.VITE_API_URL;
   
   // 👇 Твій роутинг: /users/auth/:provider
   // (перевірка на подвійний слеш)
