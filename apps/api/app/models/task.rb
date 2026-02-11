@@ -12,6 +12,8 @@ class Task < ApplicationRecord
 
   validates :title, presence: true
 
+  validate :project_is_not_a_folder
+
   default_scope { order(position: :asc) }
 
   enum :priority, { 
@@ -47,5 +49,11 @@ class Task < ApplicationRecord
 
   def set_default_status
     self.status ||= "todo"
+  end
+
+  def project_is_not_a_folder
+    if project&.subprojects&.exists?
+      errors.add(:base, "Cannot add tasks to a Folder project (it already contains sub-projects)")
+    end
   end
 end

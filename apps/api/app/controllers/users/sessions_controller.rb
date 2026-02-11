@@ -1,5 +1,5 @@
 class Users::SessionsController < Devise::SessionsController
-  skip_before_action :authenticate_user!, except: %i[destroy]
+  skip_before_action :authenticate_user!, only: %i[create destroy]
   skip_before_action :verify_authenticity_token, only: %i[create destroy]
 
   respond_to :json

@@ -1,5 +1,4 @@
 class UserBlueprint < Blueprinter::Base
-  class UserBlueprint < Blueprinter::Base
   identifier :id
 
   fields :email, :first_name, :last_name, :created_at
@@ -14,6 +13,5 @@ class UserBlueprint < Blueprinter::Base
 
   field :full_name do |user|
     "#{user.first_name} #{user.last_name}".strip
-  end
   end
 end
