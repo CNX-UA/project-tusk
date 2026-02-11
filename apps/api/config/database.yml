@@ -75,9 +75,8 @@ test:
 # the values provided in this file. Alternatively, you can specify a connection
 # URL environment variable explicitly:
 #
-production:
-  <<: *default
-  url: <%= ENV["DATABASE_URL"] %>
+#   production:
+#     url: <%= ENV["MY_APP_DATABASE_URL"] %>
 #
 # Connection URLs for non-primary databases can also be configured using
 # environment variables. The variable name is formed by concatenating the
@@ -106,3 +105,13 @@ production:
 #    <<: *primary_production
 #    database: api_production_cable
 #    migrations_paths: db/cable_migrate
+production:
+  primary: &primary_production
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
+  cache:
+    <<: *primary_production
+  queue:
+    <<: *primary_production
+  cable:
+    <<: *primary_production
