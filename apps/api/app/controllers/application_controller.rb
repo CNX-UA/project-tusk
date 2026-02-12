@@ -20,7 +20,7 @@ class ApplicationController < ActionController::API
 
     cookies['XSRF-TOKEN'] = {
       value: token,
-      same_site: :lax,
+      same_site: :none,
       httponly: false, 
       secure: Rails.env.production?,
       path: '/'
