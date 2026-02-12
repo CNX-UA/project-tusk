@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, Typography, Box, CardActionArea, Avatar, Chip} from "@mui/material";
+import ActionMenu from '@/components/ui/ActionMenu'; // Шлях до твоєї універсальної випадашки
 import Stack from '@mui/material/Stack';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
@@ -14,7 +15,7 @@ const STATUS_COLORS = {
 
 const EntityCard = ({
   title, itemKey, icon: Icon, status, statusLabel, userAvatar, date,
-  onClick }) => {
+  onClick, actions = [] }) => {
     const statusColor = STATUS_COLORS[status?.toLowerCase()] || 'default';
     const displayStatus = statusLabel || status || 'Unknown';
     const avatarLetter = userAvatar?.name ? userAvatar.name.charAt(0).toUpperCase() : '?';
@@ -25,6 +26,7 @@ const EntityCard = ({
       sx={{ 
         height: '100%', 
         borderRadius: 3,
+        position: 'relative',
         transition: 'all 0.2s',
         border: '1px solid transparent',
         '&:hover': {
@@ -34,6 +36,12 @@ const EntityCard = ({
         }
       }}
       >
+          {actions.length > 0 && (
+            <Box sx={{ position: 'absolute', top: 12, right: 8, zIndex: 2 }}>
+              <ActionMenu actions={actions} />
+            </Box>
+          )}
+
           <CardActionArea onClick={onClick} 
           sx={{ 
           height: '100%', 
