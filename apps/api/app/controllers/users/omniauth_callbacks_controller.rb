@@ -27,7 +27,7 @@ module Users
           httponly: true,
           secure: Rails.env.production?,
           expires: 1.week.from_now,
-          same_site: :lax
+          same_site: :none
         }
 
         redirect_to "#{domain_url}/auth/callback", allow_other_host: true
