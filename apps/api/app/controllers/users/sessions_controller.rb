@@ -17,7 +17,7 @@ class Users::SessionsController < Devise::SessionsController
       httponly: true,
       secure: Rails.env.production?, #HTTPS in production
       expires: 1.week.from_now,
-      same_site: :lax 
+      same_site: :none
     }
 
     render json: {
