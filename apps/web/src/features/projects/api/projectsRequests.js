@@ -1,7 +1,7 @@
 import api from "@/api/axios"
 
-export const fetchProjects = async () => {
-    const response =  await api.get("/projects");
+export const fetchProjects = async (params = {}) => {
+    const response =  await api.get("/projects", { params });
     // Wrap response in data object for consistency
     return { data: Array.isArray(response.data) ? response.data : [response.data] };
 };

@@ -8,7 +8,6 @@ import {
   InputAdornment,
   Grid, 
 } from "@mui/material";
-
 import TagIcon from "@mui/icons-material/Tag";
 import FolderIcon from "@mui/icons-material/Folder";
 
@@ -16,29 +15,31 @@ import { projectSchema } from "../schema/projectSchema";
 import { useCreateProject } from "../hooks/useCreateProject";
 import { useToast } from "@/context/ToastProvider";
 import { useProjectMutation } from "../hooks/useProjectMutation";
-import  ProjectTypeCard from "./ProjectTypeCard";
-
 import EntityModal from "@/components/ui/EntityModal";
 
-const CreateProjectModal = ({ open, onClose, projectData }) => {
+const CreateProjectModal = ({ open, onClose, projectData, parentId }) => {
   const isEdit = !!projectData;
   const { showToast } = useToast();
   const { updateMutation } = useProjectMutation();
+
   const createMutation = useCreateProject(() => {
     showToast("Project created successfully", "success");
     handleClose();
   });
+
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   const formik = useFormik({
     initialValues: {
       title: "",
       key: "",
       description: "",
-      // project_type: "board",
+      parent_id: parentId,
     },
-    enableReinitialize: isEdit,
+    enableReinitialize: true,
     validationSchema: projectSchema,
     onSubmit: (values) => {
+
       if (isEdit) {
         updateMutation.mutate(
           { id: projectData.id, projectData: values },
@@ -53,7 +54,10 @@ const CreateProjectModal = ({ open, onClose, projectData }) => {
             },
           },
         );
-      } else createMutation.mutate(values);
+      } else {
+        console.log("Sending payload:", values); // <--- Додай це для дебагу
+        createMutation.mutate(values);
+      }
     },
   });
 
@@ -93,21 +97,22 @@ const CreateProjectModal = ({ open, onClose, projectData }) => {
   const handleClose = () => {
     formik.resetForm();
     createMutation.reset();
+    updateMutation.reset();
     onClose();
   };
 
   const modalAction = (
     <>
-      <Button onClick={handleClose} color="inherit">
+      <Button onClick={handleClose} color="inherit" disabled={isLoading}>
         Cancel
       </Button>
       <Button
         type="submit"
         variant="contained"
-        disabled={createMutation.isPending || !formik.isValid}
+        disabled={isLoading || !formik.isValid}
         onClick={formik.handleSubmit}
       >
-        {createMutation.isPending
+        {isLoading
           ? "Creating..."
           : isEdit
             ? "Save Changes"
@@ -121,48 +126,18 @@ const CreateProjectModal = ({ open, onClose, projectData }) => {
       open={open}
       onClose={handleClose}
       title={isEdit ? "Edit Project" : "Create New Project"}
+      subtitle={
+        isEdit 
+          ? "Update project details" 
+          : parentId 
+            ? "Create a new sub-project in this folder" 
+            : "Create a container for your work"
+      }
       actions={modalAction}
+      isLoading={isLoading}
     >
-      <Box>
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ mb: 1.5, display: "block", fontWeight: "bold" }}
-        >
-          PROJECT TYPE
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <ProjectTypeCard
-              label="Task Board"
-              value="board"
-              // selected={formik.values.project_type === "board"}
-              onClick={(val) => formik.setFieldValue("project_type", val)}
-              disabled={true}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <ProjectTypeCard
-              label="Folder"
-              icon={FolderIcon}
-              value="folder"
-              // selected={formik.values.project_type === "folder"}
-              onClick={(val) => formik.setFieldValue("project_type", val)}
-              disabled={true}
-            />
-          </Grid>
-        </Grid>
-      </Box>
 
       <Box sx={{ display: "flex", gap: 2 }}>
-        <Typography
-          variant="caption"
-          fontWeight="bold"
-          color="text.secondary"
-          sx={{ mb: 1.5, display: "block" }}
-        >
-          DETAILS
-        </Typography>
         <Grid container spacing={2}>
           <Grid item xs={8}>
             <TextField
@@ -202,7 +177,7 @@ const CreateProjectModal = ({ open, onClose, projectData }) => {
               sx={{
                 width: 140,
                 "& .MuiInputBase-input.Mui-disabled": {
-                  WebkitTextFillColor: "#1976d2", // Робимо текст ключа синім (колір бренду), щоб підсвітити його
+                  WebkitTextFillColor: "#1976d2",
                   fontWeight: "bold",
                 },
               }}
@@ -223,30 +198,6 @@ const CreateProjectModal = ({ open, onClose, projectData }) => {
           onChange={formik.handleChange}
         />
     </EntityModal>
-    /* <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle sx={{ fontWeight: "bold" }}>{isEdit ? 'Edit Project' : 'Create New Project'}</DialogTitle>
-
-        <DialogContent>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {isEdit ? 'Update your workspace details' : 'Create a workspace to track everything'}
-          </Typography>
-
-          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-
-
-            
-          </Box>
-
-          
-
-          {createMutation.isError && (
-            <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-              {createMutation.error?.response?.data?.status?.message ||
-                console.log(createMutation.error)}
-            </Typography>
-          )}
-        </DialogContent>
-    </Dialog> */
   );
 };
 export default CreateProjectModal;
