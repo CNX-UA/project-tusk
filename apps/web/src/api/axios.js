@@ -20,7 +20,9 @@ api.interceptors.request.use((config) => {
   //  config.headers['X-XSRF-TOKEN'] = csrfToken;
  //}
 
-  //return config;
+  return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
 api.interceptors.response.use(
