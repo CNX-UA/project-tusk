@@ -34,7 +34,7 @@ module Api
   
     config.session_options = {
       key: '_project_tusk_session',
-      same_site: :lax, 
+      same_site: :none, 
       secure: Rails.env.production?
     }
 
