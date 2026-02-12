@@ -16,7 +16,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         httponly: true,
         secure: Rails.env.production?,
         expires: 1.week.from_now,
-        same_site: :lax
+        same_site: :none
       }
 
       response.set_header('Authorization', "Bearer #{access_token}")
