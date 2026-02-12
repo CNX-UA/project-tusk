@@ -11,7 +11,6 @@ import OAuthCallback from "@/features/auth/components/OAuthCallback";
 
 import Projects from "./features/projects/components/ProjectsDashboard";
 import ProjectPage from "./features/projects/components/ProjectPage";
-import Tasks from "./features/tasks/components/TasksPage";
 
 function App() {
   const [mode, setMode] = useState(localStorage.getItem("themeMode") || "dark");
@@ -72,7 +71,6 @@ function App() {
             >
               <Route path="/projects" element={<Projects />} />
               <Route path="/projects/:id" element={<ProjectPage />} />
-              <Route path="/tasks" element={<Tasks />} />
               {/* <Route path="/settings" element={<Settings />} /> */}
               <Route path="*" element={<Navigate to="/projects" replace />} />
             </Route>

@@ -18,7 +18,7 @@ import { useProjectMutation } from "../hooks/useProjectMutation";
 import CreateProjectModal from "./CreateProjectModal";
 
 const Projects = () => {
-  const { data: projects, isLoading, isError, error } = useProjects();
+  const { data: projects, isLoading, isError, error } = useProjects({ root: true });
   const { showToast } = useToast();
   const { deleteMutation } = useProjectMutation();
 
