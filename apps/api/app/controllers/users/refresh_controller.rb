@@ -34,7 +34,7 @@ class Users::RefreshController < ApplicationController
       httponly: true,
       secure: Rails.env.production?,
       expires: 1.week.from_now,
-      same_site: :lax
+      same_site: :none
     }
   end
 
