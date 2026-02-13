@@ -6,20 +6,26 @@ import {
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import GroupsIcon from '@mui/icons-material/Groups';
 
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher"
 import LogoutButton from "@/features/auth/components/LogoutButton";
+// import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 
 const drawerWidth = 240;
 
-const Aside = ({ toggleColorMode, mode, onLogout, userEmail }) => {
+const Aside = ({ toggleColorMode, mode, onLogout }) => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  // const { data: user, isLoading } = useCurrentUser();
 
   const menuItems = [
     { text: "Projects", icon: <DashboardRoundedIcon />, path: "/projects" },
     { text: "Tasks", icon: <AssignmentRoundedIcon />, path: "/tasks" },
+    { text: "Teams", icon: <GroupsIcon />, path: "/teams" },
     { text: "Settings", icon: <SettingsRoundedIcon />, path: "/settings" },
+
   ];
 
   return (
@@ -102,12 +108,14 @@ const Aside = ({ toggleColorMode, mode, onLogout, userEmail }) => {
           }}
         >
           <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.main", fontSize: "14px" }}>
-            {userEmail ? userEmail[0].toUpperCase() : "U"}
+            {/* {user?.email?.charAt(0).toUpperCase()} */}
           </Avatar>
           <Box sx={{ overflow: "hidden" }}>
-            <Typography>Student</Typography>
+            <Typography>
+              'User'
+            </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ display: "block", noWrap: true }}
-            >{userEmail || "user@tusk.com"}</Typography>
+            >?</Typography>
           </Box>
         </Box>
 
