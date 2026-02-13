@@ -5,6 +5,10 @@ class TeamPolicy < ApplicationPolicy
     end
   end
 
+  def index?
+    true
+  end
+  
   def show?
     is_member?
   end
