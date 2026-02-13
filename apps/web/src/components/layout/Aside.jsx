@@ -6,6 +6,7 @@ import {
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import GroupsIcon from '@mui/icons-material/Groups';
 
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher"
 import LogoutButton from "@/features/auth/components/LogoutButton";
@@ -22,7 +23,9 @@ const Aside = ({ toggleColorMode, mode, onLogout }) => {
   const menuItems = [
     { text: "Projects", icon: <DashboardRoundedIcon />, path: "/projects" },
     { text: "Tasks", icon: <AssignmentRoundedIcon />, path: "/tasks" },
+    { text: "Teams", icon: <GroupsIcon />, path: "/teams" },
     { text: "Settings", icon: <SettingsRoundedIcon />, path: "/settings" },
+
   ];
 
   return (
