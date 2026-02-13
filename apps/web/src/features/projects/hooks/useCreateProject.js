@@ -7,9 +7,9 @@ export const useCreateProject = (onSuccessCallback) => {
     return useMutation({
         mutationFn: createProject,
         onSuccess: (data) => {
-            queryClient.invalidateQueries(['projects']);
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
 
-            if (onSuccessCallback) onSuccessCallback(data);
+            if (onSuccessCallback) onSuccessCallback(data?.data);
         },
     });
 };

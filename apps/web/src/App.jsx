@@ -1,8 +1,7 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { CssBaseline, Box } from "@mui/material";
-import api from '@/api/axios'
 import { ThemeProvider } from "@mui/material/styles";
 import { ToastProvider } from "./context/ToastProvider";
 import { getAppTheme } from "@/config/theme";
@@ -10,20 +9,14 @@ import MainLayout from "@/components/layout/MainLayout";
 import AuthForm from "@/features/auth/components/AuthForm";
 import OAuthCallback from "@/features/auth/components/OAuthCallback";
 
-import Projects from "@/features/projects/components/ProjectsPage";
-import { Tasks } from "./features/tasks/components/Tasks";
-import { Settings } from "./features/settings/components/Settings";
+import Projects from "./features/projects/components/ProjectsDashboard";
+import ProjectPage from "./features/projects/components/ProjectPage";
 
 function App() {
   const [mode, setMode] = useState(localStorage.getItem("themeMode") || "dark");
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   const theme = useMemo(() => getAppTheme(mode), [mode]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) setIsLoggedIn(true);
-  }, []);
 
   const queryClient = useQueryClient();
 
@@ -77,8 +70,8 @@ function App() {
               }
             >
               <Route path="/projects" element={<Projects />} />
-              <Route path="/tasks" element={<Tasks />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/projects/:id" element={<ProjectPage />} />
+              {/* <Route path="/settings" element={<Settings />} /> */}
               <Route path="*" element={<Navigate to="/projects" replace />} />
             </Route>
           ) : (

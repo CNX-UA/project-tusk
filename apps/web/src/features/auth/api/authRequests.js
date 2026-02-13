@@ -1,5 +1,5 @@
 import api from '@/api/axios';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 
 /**
  * Ініціація OAuth через POST з CSRF захистом.
@@ -17,15 +17,15 @@ const submitOAuthForm = (provider) => {
   form.method = 'POST';
   form.action = actionUrl;
   
-  // 👇 Читаємо токен з кук і додаємо в форму
-  const csrfToken = Cookies.get('XSRF-TOKEN');
-  if (csrfToken) {
-    const hiddenField = document.createElement('input');
-    hiddenField.type = 'hidden';
-    hiddenField.name = 'authenticity_token'; // Rails чекає саме це поле
-    hiddenField.value = csrfToken;
-    form.appendChild(hiddenField);
-  }
+  // // 👇 Читаємо токен з кук і додаємо в форму
+  // const csrfToken = Cookies.get('XSRF-TOKEN');
+  // if (csrfToken) {
+  //   const hiddenField = document.createElement('input');
+  //   hiddenField.type = 'hidden';
+  //   hiddenField.name = 'authenticity_token'; // Rails чекає саме це поле
+  //   hiddenField.value = csrfToken;
+  //   form.appendChild(hiddenField);
+  // }
 
   document.body.appendChild(form);
   form.submit();
@@ -49,14 +49,6 @@ export const loginUser = async (credentials) => {
 export const registerUser = async (userData) => {
   const response = await api.post('/signup', { user: userData });
   return response.data.data;
-};
-
-export const loginWithGoogle = () => {
-  submitOAuthForm('google_oauth2');
-};
-
-export const loginWithGithub = () => {
-  submitOAuthForm('github');
 };
 
 export const logoutUser = async () => {
