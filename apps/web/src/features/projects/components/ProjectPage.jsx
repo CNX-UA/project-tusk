@@ -21,15 +21,14 @@ import { useTaskMutation } from "@/features/tasks/hooks/useTaskMutation";
 import { useProjectMutation } from "../hooks/useProjectMutation";
 import CreateProjectModal from "./CreateProjectModal";
 import CreateTaskModal from "@/features/tasks/components/CreateTaskModal";
-
-
+import KanbanBoard from "@/features/tasks/components/KanbanBoard";
 
 const ProjectPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [taskToEdit, setTaskToEdit] = useState(null);
-  const { deleteMutation: deleteTaskMutation } = useTaskMutation(); 
+  const { deleteMutation: deleteTaskMutation } = useTaskMutation();
 
   const [isProjectModalOpen, setProjectModalOpen] = useState(false);
   const [isTaskModalOpen, setTaskModalOpen] = useState(false);
@@ -54,18 +53,18 @@ const ProjectPage = () => {
 
   const handleDeleteTask = async (taskId) => {
     if (window.confirm("Delete this task?")) {
-        try {
-            await deleteTaskMutation.mutateAsync(taskId);
-            showToast("Task deleted", "success");
-        } catch (e) {
-            showToast("Failed to delete task", "error");
-        }
+      try {
+        await deleteTaskMutation.mutateAsync(taskId);
+        showToast("Task deleted", "success");
+      } catch (e) {
+        showToast("Failed to delete task", "error");
+      }
     }
   };
 
   const handleCloseTaskModal = () => {
-      setTaskModalOpen(false);
-      setTaskToEdit(null); 
+    setTaskModalOpen(false);
+    setTaskToEdit(null);
   };
 
   const handleDeleteClick = async (subProjectId) => {
@@ -196,18 +195,12 @@ const ProjectPage = () => {
           </Grid>
         )}
         {hasTasks && (
-          <Grid container spacing={2}>
-            {project.tasks.map((task) => (
-              <Grid item xs={12} sm={6} md={4} key={task.id}>
-                <TaskCard
-                  task={task}
-                  onClick={() => handleEditTask(task)}
-                  onEdit={handleEditTask}
-                  onDelete={handleDeleteTask}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          <KanbanBoard 
+              tasks={project.tasks}
+              projectId={project.id}
+              onEdit={handleEditTask}
+              onDelete={handleDeleteTask}
+           />
         )}
 
         {!hasSubprojects && !hasTasks && (
@@ -243,7 +236,7 @@ const ProjectPage = () => {
 
       <CreateTaskModal
         open={isTaskModalOpen}
-        onClose={handleCloseTaskModal}        
+        onClose={handleCloseTaskModal}
         projectId={project.id}
         taskData={taskToEdit}
       />

@@ -25,6 +25,12 @@ const PRIORITIES = [
   { value: 2, label: "High", color: "#f44336" }, // Red
 ];
 
+const getPriorityValue = (p) => {
+    if (p === 'high' || p === 2) return 2;
+    if (p === 'medium' || p === 1) return 1;
+    return 0; // low або default
+};
+
 const CreateTaskModal = ({ open, onClose, projectId, taskData }) => {
   const { showToast } = useToast();
   const isEdit = !!taskData;
@@ -43,6 +49,8 @@ const CreateTaskModal = ({ open, onClose, projectId, taskData }) => {
     },
     validationSchema: taskSchema,
     onSubmit: (values) => {
+      const payload = { ...values, priority: Number(values.priority) };
+
       if (isEdit) {
         updateMutation.mutate(
           { id: taskData.id, taskData: values },
@@ -80,7 +88,7 @@ const CreateTaskModal = ({ open, onClose, projectId, taskData }) => {
         deadline: taskData.deadline ? taskData.deadline.split("T")[0] : "",
       });
     } else {
-      formik.resetForm();
+        if (open) formik.resetForm();
     }
   }, [isEdit, taskData, open]);
 
@@ -147,7 +155,11 @@ const CreateTaskModal = ({ open, onClose, projectId, taskData }) => {
                 label="Priority"
                 onChange={formik.handleChange}
                 renderValue={(selected) => {
-                  const priority = PRIORITIES.find((p) => p.value === selected);
+                  const priority = PRIORITIES.find(p => p.value === Number(selected)) || PRIORITIES[1];
+
+                  if (!priority) {
+                    return selected;
+                  }
                   return (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <FlagIcon sx={{ color: priority.color, fontSize: 20 }} />

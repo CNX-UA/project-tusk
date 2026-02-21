@@ -98,11 +98,11 @@ const AuthForm = ({ onLoginSuccess }) => {
         </Button>
       </Box>
 
-      <Divider sx={{ my: 3 }}>
+      {/* <Divider sx={{ my: 3 }}>
         <Typography variant="body2" sx={{ color: "text.secondary" }}>
           OR
         </Typography>
-      </Divider>
+      </Divider> */}
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {/* <Button 
