@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import React, { useState , useEffect } from "react";
 import { useFormik } from "formik";
 import {
   TextField,
@@ -6,7 +6,8 @@ import {
   Box,
   Typography,
   InputAdornment,
-  Grid, 
+  Grid,
+  MenuItem,
 } from "@mui/material";
 import TagIcon from "@mui/icons-material/Tag";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -16,11 +17,15 @@ import { useCreateProject } from "../hooks/useCreateProject";
 import { useToast } from "@/context/ToastProvider";
 import { useProjectMutation } from "../hooks/useProjectMutation";
 import EntityModal from "@/components/ui/EntityModal";
+import { useTeams } from "@/features/teams/hooks/useTeams";
 
 const CreateProjectModal = ({ open, onClose, projectData, parentId }) => {
   const isEdit = !!projectData;
   const { showToast } = useToast();
   const { updateMutation } = useProjectMutation();
+  const [selectedTeamId, setSelectedTeamId] = useState("");
+
+  const { data: teams, isLoading: isLoadingTeams } = useTeams();
 
   const createMutation = useCreateProject(() => {
     showToast("Project created successfully", "success");
@@ -39,6 +44,10 @@ const CreateProjectModal = ({ open, onClose, projectData, parentId }) => {
     enableReinitialize: true,
     validationSchema: projectSchema,
     onSubmit: (values) => {
+      const payload = {
+        ...values,
+        team_id: values.team_id || null,
+      };
 
       if (isEdit) {
         updateMutation.mutate(
@@ -55,7 +64,7 @@ const CreateProjectModal = ({ open, onClose, projectData, parentId }) => {
           },
         );
       } else {
-        console.log("Sending payload:", values); // <--- Додай це для дебагу
+        console.log("Sending payload:", values); 
         createMutation.mutate(values);
       }
     },
@@ -67,6 +76,7 @@ const CreateProjectModal = ({ open, onClose, projectData, parentId }) => {
         title: projectData.title || "",
         key: projectData.key || "",
         description: projectData.description || "",
+        team_id: projectData.team_id || "",
       });
     }
   }, [isEdit, projectData]);
@@ -112,11 +122,7 @@ const CreateProjectModal = ({ open, onClose, projectData, parentId }) => {
         disabled={isLoading || !formik.isValid}
         onClick={formik.handleSubmit}
       >
-        {isLoading
-          ? "Creating..."
-          : isEdit
-            ? "Save Changes"
-            : "Create Project"}
+        {isLoading ? "Creating..." : isEdit ? "Save Changes" : "Create Project"}
       </Button>
     </>
   );
@@ -127,16 +133,15 @@ const CreateProjectModal = ({ open, onClose, projectData, parentId }) => {
       onClose={handleClose}
       title={isEdit ? "Edit Project" : "Create New Project"}
       subtitle={
-        isEdit 
-          ? "Update project details" 
-          : parentId 
-            ? "Create a new sub-project in this folder" 
+        isEdit
+          ? "Update project details"
+          : parentId
+            ? "Create a new sub-project in this folder"
             : "Create a container for your work"
       }
       actions={modalAction}
       isLoading={isLoading}
     >
-
       <Box sx={{ display: "flex", gap: 2 }}>
         <Grid container spacing={2}>
           <Grid item xs={8}>
@@ -184,19 +189,59 @@ const CreateProjectModal = ({ open, onClose, projectData, parentId }) => {
             />
           </Grid>
         </Grid>
-      </Box>
 
         <TextField
+          select
           fullWidth
-          multiline
-          rows={3}
-          id="description"
-          name="description"
-          label="Description (Optional)"
-          placeholder="What is this project about?"
-          value={formik.values.description}
+          id="team_id"
+          name="team_id"
+          label="Assign to Team"
+          value={formik.values.team_id}
           onChange={formik.handleChange}
-        />
+          onBlur={formik.handleBlur}
+          disabled={isLoadingTeams}
+        >
+          <MenuItem value="">
+            <Typography color="text.secondary" fontStyle="italic">
+              Personal Project (No Team)
+            </Typography>
+          </MenuItem>
+
+          {teams?.map((team) => (
+            <MenuItem key={team.id} value={team.id}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  alignItems: "center",
+                }}
+              >
+                <Typography>{team.name}</Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ ml: 1 }}
+                >
+                  {team.department_type?.toUpperCase()}
+                </Typography>
+              </Box>
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+
+      <TextField
+        fullWidth
+        multiline
+        rows={3}
+        id="description"
+        name="description"
+        label="Description (Optional)"
+        placeholder="What is this project about?"
+        value={formik.values.description}
+        onChange={formik.handleChange}
+      />
     </EntityModal>
   );
 };

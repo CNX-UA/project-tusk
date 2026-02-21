@@ -12,6 +12,10 @@ import OAuthCallback from "@/features/auth/components/OAuthCallback";
 import Projects from "./features/projects/components/ProjectsDashboard";
 import ProjectPage from "./features/projects/components/ProjectPage";
 
+import TeamsDashboard from "./features/teams/components/TeamsDashboard";
+import TeamPage from "./features/teams/components/TeamPage";
+
+
 function App() {
   const [mode, setMode] = useState(localStorage.getItem("themeMode") || "dark");
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
@@ -73,6 +77,10 @@ function App() {
               <Route path="/projects/:id" element={<ProjectPage />} />
               {/* <Route path="/settings" element={<Settings />} /> */}
               <Route path="*" element={<Navigate to="/projects" replace />} />
+
+              <Route path="/teams" element={<TeamsDashboard />} />
+              <Route path="/teams/:id" element={<TeamPage />} />
+
             </Route>
           ) : (
             <Route path="*" element={<Navigate to="/login" replace />} />

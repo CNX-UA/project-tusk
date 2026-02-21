@@ -17,16 +17,6 @@ const submitOAuthForm = (provider) => {
   form.method = 'POST';
   form.action = actionUrl;
   
-  // // 👇 Читаємо токен з кук і додаємо в форму
-  // const csrfToken = Cookies.get('XSRF-TOKEN');
-  // if (csrfToken) {
-  //   const hiddenField = document.createElement('input');
-  //   hiddenField.type = 'hidden';
-  //   hiddenField.name = 'authenticity_token'; // Rails чекає саме це поле
-  //   hiddenField.value = csrfToken;
-  //   form.appendChild(hiddenField);
-  // }
-
   document.body.appendChild(form);
   form.submit();
   console.log(csrfToken)
@@ -41,6 +31,8 @@ export const loginUser = async (credentials) => {
   if (accessToken) {
     const tokenToStore = accessToken.startsWith('Bearer') ? accessToken : `Bearer ${accessToken}`;
     localStorage.setItem("token", tokenToStore);
+
+    localStorage.setItem("user", JSON.stringify(user));
   }
   
   return user;
@@ -54,6 +46,7 @@ export const registerUser = async (userData) => {
 export const logoutUser = async () => {
   try {
     await api.delete("/logout"); 
+    localStorage.removeItem("user");
   } catch (error) {
     console.error("Logout error", error);
   } finally {

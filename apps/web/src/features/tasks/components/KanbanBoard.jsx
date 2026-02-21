@@ -20,6 +20,16 @@ const COLUMNS = {
   },
   done: { title: "Done", status: 3, color: "#e8f5e9", borderColor: "#a5d6a7" },
 };
+
+const getCurrentUser = () => {
+  try {
+    const userStr = localStorage.getItem("user");
+    return userStr ? JSON.parse(userStr) : null;
+  } catch (e) {
+    return null;
+  }
+};
+
 const KanbanBoard = ({ tasks, projectId, onEdit, onDelete }) => {
   const { updateMutation } = useTaskMutation();
   const [columns, setColumns] = useState({
@@ -36,12 +46,14 @@ const KanbanBoard = ({ tasks, projectId, onEdit, onDelete }) => {
   }, []);
 
   useEffect(() => {
-    const sortedTasks = [...tasks].sort((a, b) => (a.position || 0) - (b.position || 0));
+    const sortedTasks = [...tasks].sort(
+      (a, b) => (a.position || 0) - (b.position || 0),
+    );
 
     const grouped = { todo: [], in_progress: [], review: [], done: [] };
     sortedTasks.forEach((task) => {
       let key = "todo";
-      const s = task.status;    
+      const s = task.status;
 
       if (s === 0 || s === "todo") key = "todo";
       if (s === 1 || s === "in_progress") key = "in_progress";
@@ -55,7 +67,7 @@ const KanbanBoard = ({ tasks, projectId, onEdit, onDelete }) => {
     setColumns(grouped);
   }, [tasks]);
 
-  const handleDragEnd = (result) => {
+const handleDragEnd = (result) => {
     if (!result.destination) return;
     const { source, destination } = result;
 
@@ -66,33 +78,76 @@ const KanbanBoard = ({ tasks, projectId, onEdit, onDelete }) => {
       return;
     }
 
+    const sourceColumnKey = source.droppableId;
+    const destColumnKey = destination.droppableId;
+    
+    // 1. Отримуємо задачу з поточної колонки
+    const taskToMove = columns[sourceColumnKey][source.index];
+
+    let newAssigneeId = taskToMove.assignee_id;
+    let newAssigneeObj = taskToMove.assignee;
+
+    // 2. Логіка "Взяти в роботу"
+    if (destColumnKey === "in_progress" && sourceColumnKey !== "in_progress") {
+      const currentUser = getCurrentUser();
+
+      if (currentUser && taskToMove.assignee_id !== currentUser.id) {
+        const confirmAssign = window.confirm(
+          `Move "${taskToMove.title}" to In Progress and assign it to yourself?`
+        );
+
+        if (!confirmAssign) {
+          return;
+        }
+
+        newAssigneeId = currentUser.id;
+        newAssigneeObj = currentUser; 
+      }
+    }
+
     const newColumns = { ...columns };
-    const sourceList = newColumns[source.droppableId];
+    const sourceList = [...newColumns[source.droppableId]]; // Копіюємо масив
+    const destList = source.droppableId === destination.droppableId 
+        ? sourceList 
+        : [...newColumns[destination.droppableId]]; // Копіюємо масив
+
+    // Видаляємо зі старої колонки
     const [movedTask] = sourceList.splice(source.index, 1);
 
-    const newStatus = COLUMNS[destination.droppableId].status;
-    movedTask.status = newStatus;
+    // 3. !!! ВАЖЛИВЕ ВИПРАВЛЕННЯ ТУТ !!!
+    // Оновлюємо дані об'єкта для локального стейту (UI), щоб аватар змінився миттєво
+    const updatedTask = {
+        ...movedTask,
+        status: COLUMNS[destination.droppableId].status,
+        assignee_id: newAssigneeId,
+        assignee: newAssigneeObj // Це оновить аватарку відразу
+    };
 
-    const destList = newColumns[destination.droppableId];
-    destList.splice(destination.index, 0, movedTask);
+    // Вставляємо в нову колонку
+    destList.splice(destination.index, 0, updatedTask);
 
+    // Оновлюємо стейт
+    newColumns[source.droppableId] = sourceList;
+    if (source.droppableId !== destination.droppableId) {
+        newColumns[destination.droppableId] = destList;
+    }
     setColumns(newColumns);
 
+    // 4. Відправка на сервер
     const newPosition = destination.index + 1;
-
     updateMutation.mutate({
       id: movedTask.id,
       taskData: {
-        status: newStatus,
+        status: updatedTask.status,
         position: newPosition,
+        assignee_id: newAssigneeId,
       },
     });
   };
-
   if (!isBrowser) {
     return null; // Або <CircularProgress />
   }
-  
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Stack
